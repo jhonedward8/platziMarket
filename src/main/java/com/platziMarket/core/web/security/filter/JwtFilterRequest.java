@@ -36,11 +36,13 @@ public class JwtFilterRequest extends OncePerRequestFilter {
 		String authotizationHeader = request.getHeader("Authorization");
 		
 		if(authotizationHeader != null && authotizationHeader.startsWith("Bearer")) {
+			//se extrae el token (debe empezar con Bearer y espacio)  y el usuario del token
 			String jwt = authotizationHeader.substring(7);
 			String username = jwtUtil.extractUsername(jwt);
 			
 			if(username != null && SecurityContextHolder
 					.getContext().getAuthentication() == null) {
+				//obtener datos del usuario
 				UserDetails userDetails = platziUserDetailsService
 						.loadUserByUsername(username);
 				
@@ -49,7 +51,7 @@ public class JwtFilterRequest extends OncePerRequestFilter {
 							new UsernamePasswordAuthenticationToken(
 									userDetails, null, userDetails.getAuthorities());
 					
-					//obtener todo los detalles de la autenticacion como l enavegador y hora
+					//obtener todo los detalles de la autenticacion como el navegador y hora
 					authenticationToken.setDetails(
 							new WebAuthenticationDetailsSource().buildDetails(request));
 					

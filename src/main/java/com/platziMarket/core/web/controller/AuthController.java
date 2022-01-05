@@ -28,7 +28,8 @@ public class AuthController {
 	private JwtUtil jwtUtil;
 	
 	@PostMapping("/authenticate")
-	public ResponseEntity<AuthenticationResponse> createToken(@RequestBody AuthenticationRequest request){
+	public ResponseEntity<AuthenticationResponse> createToken(
+			@RequestBody AuthenticationRequest request){
 		
 		try {
 			//realiza la autenticacin de forma automatica
@@ -37,8 +38,10 @@ public class AuthController {
 							request.getUsername(), 
 							request.getPassword()
 							));
+			
 			//se obtienen los UserDetails
-			UserDetails details = platziUserDetailsService.loadUserByUsername(request.getUsername());
+			UserDetails details = platziUserDetailsService
+					.loadUserByUsername(request.getUsername());
 			
 			//crear el token
 			String jwt = jwtUtil.generateToken(details);
