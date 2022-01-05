@@ -18,6 +18,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.platziMarket.core.domain.Product;
 import com.platziMarket.core.domain.service.ProductService;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -28,11 +32,18 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/")
+    @ApiOperation("Get all supermarket products")
+    @ApiResponse(code = 200, message = "ok")
     public ResponseEntity<List<Product>> getAll(){
         return new ResponseEntity<>(productService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
+    @ApiOperation("search a product with id")
+    @ApiResponses({
+    	@ApiResponse(code = 200, message = "OK"),
+    	@ApiResponse(code = 404, message = "Not Found")
+    })
     public ResponseEntity<Product> getProduct(@PathVariable("id") int productId){
         return productService.getProduct(productId)
         		.map(product -> new ResponseEntity<>(product, HttpStatus.OK))
@@ -40,7 +51,9 @@ public class ProductController {
     }
 
     @GetMapping("/category/{id}")
-    public ResponseEntity<List<Product>> getByCategory(@PathVariable("id") int categoryId){
+    public ResponseEntity<List<Product>> getByCategory(
+    		@ApiParam(value = "The id of the product", required = true, example = "1")
+    		@PathVariable("id") int categoryId){
         return productService.getByCategory(categoryId)
         		.map(products -> new ResponseEntity<>(products, HttpStatus.OK))
         		.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
